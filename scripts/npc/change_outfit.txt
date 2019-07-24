@@ -1,0 +1,81 @@
+//////////////////////////////////////////////////////////////////////////////
+//																			//
+//	rAthena server emulator NPC script										//
+//	https://github.com/rathena/rathena										//
+//																			//
+//	NPC Change Outfit (Change Body)											//
+//  (cc) 2019 by Cesar Rincon "NightFox"									//
+// 	https://nightfoxandco.com												//
+//	contact@nightfoxandco.com												//
+//																			//
+//	- CREATIVE COMMONS -													//
+//	"Attribution-NonCommercial 4.0 International"							//
+//	https://creativecommons.org/licenses/by-nc/4.0/							//
+//																			//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+// Fashion Expert
+alberta_in,28,29,3	script	Fashion Expert	918,{
+
+	// Variables
+	.@my_name$ = "- ^0000F0Cruella De Vil^000000 -";
+	.@your_name$ = "^0000F0" + strcharinfo(0) + "^000000";
+	.@eac = eaclass();
+	.@zeny = Zeny;
+	.@cost = 0;
+	.@new_look = 0;
+	.@current_look = getlook(LOOK_BODY2);
+	
+	// Check 3rd class
+	if (!(.@eac & EAJL_THIRD)) {
+		mes .@my_name$;
+		mes "My apologies, but i doesn't have any clothes that fits you.";
+		close;
+	}
+	
+	// Welcome message
+	mes .@my_name$;
+	mes "Hi " + .@your_name$ + ".";
+	mes "I'm here to change your appearance.";
+	mes "What kind of clothes you're looking for?";
+	next;
+	
+	// Selection menu
+	switch(select("Normal outfit [^0000F0100000 z^000000]:Alternate outfit [^0000F0250000 z^000000]")) {
+		case 1:
+			.@cost = 100000;
+			.@new_look = 0;
+			break;
+		case 2:
+			.@cost = 250000;
+			.@new_look = 1;
+			break;
+	}
+	
+	// Check if the look it's different
+	if (.@current_look == .@new_look) {
+		mes .@my_name$;
+		mes "Sorry, but you're already wearing these clothes.";
+		close;
+	}
+	
+	// Check Zeny amount
+	.@zeny -= .@cost;
+	if (.@zeny < 0) {
+		mes .@my_name$;
+		mes "Sorry, you haven't enough money to change your clothes.";
+		close;
+	}
+		
+	// Execute
+	Zeny = .@zeny;
+	specialeffect2 78;
+	specialeffect2 887;
+	setlook	LOOK_BODY2,.@new_look;
+	mes .@my_name$;
+	mes "Thanks for your purchase!";
+	close;
+	
+}

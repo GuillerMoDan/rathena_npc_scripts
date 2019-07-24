@@ -1,0 +1,181 @@
+//////////////////////////////////////////////////////////////////////////////
+//																			//
+//	rAthena server emulator NPC script										//
+//	https://github.com/rathena/rathena										//
+//																			//
+//	NPC Reset Skills & Stats												//
+//  (cc) 2019 by Cesar Rincon "NightFox"									//
+// 	https://nightfoxandco.com												//
+//	contact@nightfoxandco.com												//
+//																			//
+//	- CREATIVE COMMONS -													//
+//	"Attribution-NonCommercial 4.0 International"							//
+//	https://creativecommons.org/licenses/by-nc/4.0/							//
+//																			//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+// Reset Skills & stats
+moc_para01,23,185,0	script	Agent Smith	899,{
+
+	// Variables
+	.@my_name$ = "- ^0000F0Agent Smith^000000 -";
+	.@your_name$ = "^0000F0" + strcharinfo(0) + "^000000";
+	.@zeny = Zeny;
+	.@level = BaseLevel;
+	.@eac = eaclass();
+	.@times = CHAR_RESET_CNT;
+	.@option = 0;
+	.@basecost = 0;
+	.@cost = 0;
+
+	// Welcome message
+	mes .@my_name$;
+	mes "Hi " + .@your_name$ + ".";
+	mes "I can erase your memories if you want.";
+	mes "What do you want to forget?";
+	next;
+	
+	// Times counter can't be zero
+	if (.@times <= 0) .@times = 1;
+	// Calculate the base cost
+	if ((.@level < 50) && (.@times < 5)) {
+		.@basecost = 0;
+	} else if (.@times < 3) {
+		.@basecost = 0;
+	} else {
+		.@basecost = 10000 + (.@times * 1000);
+	}
+	
+	// Destination menu
+	switch(select("My stats:My skills:Both stats & skills")) {
+		case 1:
+			.@option = 1;
+			.@cost = .@basecost * .@level;
+			break;
+		case 2:
+			.@option = 2;
+			.@cost = .@basecost * .@level;
+			break;
+		case 3:
+			.@option = 3;
+			.@cost = .@basecost * .@level * 2;
+			break;
+	}
+	
+	// Information
+	.@ordinal$ = "th";
+	switch (.@times) {
+		case 1:
+			.@ordinal$ = "st";
+			break;
+		case 2:
+			.@ordinal$ = "nd";
+			break;
+		case 3:
+			.@ordinal$ = "rd";
+			break;
+	}
+	mes .@my_name$;
+	mes "This is the ^F00000" + .@times + .@ordinal$ + " ^000000time you want to lose your memories.";
+	if (.@cost == 0) {
+		mes "This time i'll do it for ^F00000free^000000.";
+	} else {
+		mes "This time you have to pay";
+		mes "^F00000" + .@cost + "^000000 z  for my services.";
+	}
+	mes "Do you want to continue?";
+	next;
+	
+	// Confirm
+	switch(select("No:Yes")) {
+		case 1:
+			mes .@my_name$;
+			mes "All right.";
+			mes "If you change your mind, come back.";
+			close;
+			break;
+		case 2:
+			break;
+	}
+	
+	// Check Zeny amount
+	.@zeny -= .@cost;
+	if (.@zeny < 0) {
+		mes .@my_name$;
+		mes "Sorry, you haven't enough money to pay the service...";
+		close;
+	}
+	
+	// Check if anything is equipped at skill reset
+	if (.@option > 1) {
+		if (ismounting()) {
+			mes .@my_name$;
+			mes "You must leave your ^F00000MOUNT^000000 first then return.";
+			close;
+		} else if ((.@eac & EAJ_BASEMASK) == EAJ_SWORDMAN) {		// Swordman base job
+			if (checkriding() || checkdragon()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000MOUNT^000000 first then return.";
+				close;
+			}
+		} else if ((.@eac & EAJ_BASEMASK) == EAJ_MERCHANT) {		// Merchant base job
+			if (checkcart()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000CART^000000 first then return.";
+				close;
+			} else if (checkmadogear()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000MADOGEAR^000000 first then return.";
+				close;
+			}
+		} else if ((.@eac & EAJ_BASEMASK) == EAJ_ARCHER) {			// Archer base job
+			if (checkfalcon()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000FALCON^000000 first then return.";
+				close;
+			} else if (checkwug()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000WARG^000000 first then return.";
+				close;
+			}
+		} else if ((.@eac & EAJ_BASEMASK) == EAJ_NOVICE) {			// (super) Novice base job
+			if (checkcart()) {
+				mes .@my_name$;
+				mes "You must leave your ^F00000CART^000000 first then return.";
+				close;
+			}
+		}
+	}
+	
+	// Do the reset
+	switch (.@option) {
+		case 1:
+			resetstatus();
+			specialeffect2 371;
+			break;
+		case 2:
+			resetskill();
+			specialeffect2 158;
+			break;
+		case 3:
+			resetstatus();
+			resetskill();
+			specialeffect2 338;
+			break;
+	}
+	
+	// Update reset counter
+	.@times ++;
+	CHAR_RESET_CNT = .@times;
+	
+	// Update Zeny amount
+	Zeny = .@zeny;
+	
+	// Bye bye
+	mes .@my_name$;
+	mes "Mind up your head from now...";
+	close;
+	
+}

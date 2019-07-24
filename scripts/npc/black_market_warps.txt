@@ -1,0 +1,97 @@
+//////////////////////////////////////////////////////////////////////////////
+//																			//
+//	rAthena server emulator NPC script										//
+//	https://github.com/rathena/rathena										//
+//																			//
+//	NPC Black Market Warps													//
+//  (cc) 2019 by Cesar Rincon "NightFox"									//
+// 	https://nightfoxandco.com												//
+//	contact@nightfoxandco.com												//
+//																			//
+//	- CREATIVE COMMONS -													//
+//	"Attribution-NonCommercial 4.0 International"							//
+//	https://creativecommons.org/licenses/by-nc/4.0/							//
+//																			//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+// Black Market Warps [001]
+prontera,89,81,6	script	Black Market Warps	870,{
+
+	// Variables
+	.@my_name$ = "- ^0000F0Johnny Walker^000000 -";
+	.@your_name$ = "^0000F0" + strcharinfo(0) + "^000000";
+	.@zeny = Zeny;
+	.@cost = 0;
+	.@dest_map$ = "";
+	.@pos_x = 0;
+	.@pos_y = 0;
+	
+	// Welcome message
+	mes .@my_name$;
+	mes "Hi " + .@your_name$ + ".";
+	mes "I'll provide to you some ^F00000illegal warps^000000 to forbidden destinations for a small fee.";
+	mes "Where do you want to go?";
+	next;
+	
+	// Destination menu
+	switch(select("Comodo -> 2500 z:Yuno -> 2500 z:Rachel -> 5000 z:Veins -> 5000 z:Einbroch -> 5000 z:Lighthalzen -> 5000 z:Hugel -> 5000 z")) {
+		case 1:
+			.@cost = 2500;
+			.@dest_map$ = "comodo";
+			.@pos_x = 202;
+			.@pos_y = 96;
+			break;
+		case 2:
+			.@cost = 2500;
+			.@dest_map$ = "yuno";
+			.@pos_x = 219;
+			.@pos_y = 149;
+			break;
+		case 3:
+			.@cost = 5000;
+			.@dest_map$ = "rachel";
+			.@pos_x = 250;
+			.@pos_y = 100;
+			break;
+		case 4:
+			.@cost = 5000;
+			.@dest_map$ = "veins";
+			.@pos_x = 128;
+			.@pos_y = 56;
+			break;
+		case 5:
+			.@cost = 5000;
+			.@dest_map$ = "einbroch";
+			.@pos_x = 177;
+			.@pos_y = 37;
+			break;
+		case 6:
+			.@cost = 5000;
+			.@dest_map$ = "lighthalzen";
+			.@pos_x = 120;
+			.@pos_y = 146;
+			break;
+		case 7:
+			.@cost = 5000;
+			.@dest_map$ = "hugel";
+			.@pos_x = 122;
+			.@pos_y = 136;
+			break;
+	}
+	
+	// Check Zeny amount
+	.@zeny -= .@cost;
+	if (.@zeny < 0) {
+		mes .@my_name$;
+		mes "Sorry, you haven't enough money to pay me!";
+		close;
+	}
+	
+	// Update Zeny amount & warp
+	Zeny = .@zeny;
+	warp .@dest_map$,.@pos_x,.@pos_y;
+	end;
+	
+}

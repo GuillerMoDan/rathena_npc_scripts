@@ -1,0 +1,81 @@
+//////////////////////////////////////////////////////////////////////////////
+//																			//
+//	rAthena server emulator NPC script										//
+//	https://github.com/rathena/rathena										//
+//																			//
+//	NPC Dye Clothes															//
+//  (cc) 2019 by Cesar Rincon "NightFox"									//
+// 	https://nightfoxandco.com												//
+//	contact@nightfoxandco.com												//
+//																			//
+//	- CREATIVE COMMONS -													//
+//	"Attribution-NonCommercial 4.0 International"							//
+//	https://creativecommons.org/licenses/by-nc/4.0/							//
+//																			//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+// Dye me More
+lhz_in02,47,141,3	script	Dye me More	903,{
+
+	// Variables
+	.@my_name$ = "- ^0000F0Danny de Vito^000000 -";
+	.@your_name$ = "^0000F0" + strcharinfo(0) + "^000000";
+	.@zeny = Zeny;
+	.@cost = 0;
+	.@new_look = 0;
+	.@current_look = getlook(LOOK_CLOTHES_COLOR);
+	
+	// Welcome message
+	mes .@my_name$;
+	mes "Hi " + .@your_name$ + ".";
+	mes "I'm here to dye your clothes.";
+	mes "What set of colors you're looking for?";
+	next;
+	
+	// Selection menu
+	switch(select("Set 0 (default) [^0000F010000 z^000000]:Set 1 [^0000F0150000 z^000000]:Set 2 [^0000F0150000 z^000000]:Set 3 [^0000F0150000 z^000000]")) {
+		case 1:
+			.@cost = 10000;
+			.@new_look = 0;
+			break;
+		case 2:
+			.@cost = 150000;
+			.@new_look = 1;
+			break;
+		case 3:
+			.@cost = 150000;
+			.@new_look = 2;
+			break;
+		case 4:
+			.@cost = 150000;
+			.@new_look = 3;
+			break;
+	}
+	
+	// Check if the look it's different
+	if (.@current_look == .@new_look) {
+		mes .@my_name$;
+		mes "I'm sorry, but your clothes are already of this color.";
+		close;
+	}
+	
+	// Check Zeny amount
+	.@zeny -= .@cost;
+	if (.@zeny < 0) {
+		mes .@my_name$;
+		mes "Sorry, you haven't enough money to dye your clothes.";
+		close;
+	}
+		
+	// Execute
+	Zeny = .@zeny;
+	specialeffect2 276;
+	specialeffect2 253;
+	setlook	LOOK_CLOTHES_COLOR,.@new_look;
+	mes .@my_name$;
+	mes "Thanks for dye your clothes here!";
+	close;
+	
+}
