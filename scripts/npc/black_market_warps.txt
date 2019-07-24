@@ -16,7 +16,7 @@
 
 
 
-// Black Market Warps [001]
+// Black Market Warps
 prontera,89,81,6	script	Black Market Warps	870,{
 
 	// Variables
